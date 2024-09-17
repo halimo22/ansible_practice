@@ -1,0 +1,19 @@
+- name: Install Nginx on a group of servers
+  hosts: webservers # Specify your group of servers here
+  become: yes # Ensure the tasks are run as root (sudo)
+
+  tasks:
+  - name: Install Nginx
+    ansible.builtin.package:
+      name: nginx
+      state: present # Ensure Nginx is installed
+
+  - name: Start Nginx service
+    ansible.builtin.service:
+      name: nginx
+      state: started # Ensure Nginx service is started
+
+  - name: Enable Nginx service at boot
+    ansible.builtin.service:
+      name: nginx
+      enabled: yes

@@ -1,0 +1,30 @@
+# tasks file for nginx_setup
+
+
+- name: Install nginx package
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Deploy nginx configuration file
+  ansible.builtin.copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  notify: restart nginx
+
+- name: Ensure nginx is running and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Allow traffic on port 80
+  ansible.builtin.firewalld:
+    port: 80/tcp
+    permanent: yes
+    state: enabled
+  notify: reload firewalld

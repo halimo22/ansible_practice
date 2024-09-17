@@ -1,0 +1,15 @@
+- name: Update web server configuration
+  hosts: webservers
+  become: yes
+  tasks:
+  - name: Copy web server configuration file
+    ansible.builtin.copy:
+      src: /path/to/webserver.conf
+      dest: /etc/webserver/webserver.conf
+    notify: Restart web server
+
+  handlers:
+  - name: Restart web server
+    ansible.builtin.service:
+      name: webserver
+      state: restarted

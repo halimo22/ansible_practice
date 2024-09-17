@@ -1,0 +1,14 @@
+- name: Start httpd
+  hosts: webservers
+  become: yes
+
+  tasks:
+  - name: Start httpd
+    ansible.builtin.service:
+      name: httpd
+      state: started
+
+  - name: Enable httpd at boot
+    ansible.builtin.service:
+      name: httpd
+      enabled: yes

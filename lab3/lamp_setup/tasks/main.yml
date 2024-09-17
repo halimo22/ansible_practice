@@ -1,0 +1,54 @@
+# tasks file for lamp_setup
+
+- name: Install Apache, MySQL, PHP packages
+  ansible.builtin.package:
+    name:
+    - apache2
+    - mysql-server
+    - php
+    - libapache2-mod-php
+    - php-mysql
+    state: present
+
+- name: Start and enable Apache
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Start and enable MySQL
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Copy PHP info test file to Apache document root
+  ansible.builtin.copy:
+    src: info.php
+    dest: /var/www/html/info.php
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Create MySQL database
+  ansible.builtin.mysql_db:
+    name: "{{ lamp_db_name }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Create MySQL user and grant privileges
+  ansible.builtin.mysql_user:
+    name: "{{ lamp_db_user }}"
+    password: "{{ lamp_db_password }}"
+    priv: "{{ lamp_db_name }}.*:ALL"
+    host: localhost
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Ensure Apache is restarted after changes
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
+  notify: restart apache

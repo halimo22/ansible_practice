@@ -1,0 +1,32 @@
+- name: Create directory structure on multiple hosts
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Create base directory
+    ansible.builtin.file:
+      path: /opt/myapp
+      state: directory
+      mode: '0755'
+      owner: root
+      group: root
+
+  - name: Create subdirectories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0750'
+      owner: appuser
+      group: appgroup
+    loop:
+    - /opt/myapp/logs
+    - /opt/myapp/data
+    - /opt/myapp/config
+
+  - name: Ensure certain files are absent in /opt/myapp
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+    - /opt/myapp/logs/old_log.log
+    - /opt/myapp/data/temp_file.txt

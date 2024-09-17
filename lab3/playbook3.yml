@@ -1,0 +1,10 @@
+- name: Ensure a specific line exists in /etc/hosts
+  hosts: all
+  become: yes
+  tasks:
+  - name: Add line to /etc/hosts if not present
+    ansible.builtin.lineinfile:
+      path: /etc/hosts
+      line: "192.168.1.100 myhost.example.com"
+      state: present
+      create: yes
